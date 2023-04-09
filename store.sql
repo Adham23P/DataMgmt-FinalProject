@@ -63,3 +63,61 @@ CREATE TABLE DeleteEvent (
   PRIMARY KEY (delete_id),
   FOREIGN KEY (delete_id) REFERENCES EventRelation(event_id)
 );
+
+DROP TABLE IF EXISTS PullRequestEvent;
+CREATE TABLE PullRequestEvent (
+  pullreq_event_id     varchar(20) not NULL,
+  num_pull            int(2),
+  pullreq_id          varchar(20) not NULL,
+  author_assoc        varchar(20),
+  auto_merge          BOOLEAN,
+  active_lock_reason  BOOLEAN,
+  merged              BOOLEAN,
+  mergeable           BOOLEAN,
+  rebaseable          BOOLEAN,
+  mergeable_state     varchar(20),
+  merged_by           varchar(50),       
+  num_comments        int(2),
+  num_review_comments     int(2),
+  maintainer_can_modify BOOLEAN,
+  num_commits         int(2),
+  additions           int(2),
+  deletions           int(2),
+  changed_files       int(2),
+  PRIMARY KEY (pullreq_event_id)
+  FOREIGN KEY (pullreq_event_id) REFERENCES EventRelation(event_id)
+);
+
+DROP TABLE IF EXISTS PullRequest;
+CREATE TABLE PullRequest (
+  pullreq_id     varchar(20) not NULL,
+  pullreq_url     varchar(150) not NULL,
+  pullnode_id     varchar(20) not NULL,
+  html_url        varchar(150), 
+  diff_url        varchar(150), 
+  patch_url       varchar(150), 
+  issue_url       varchar(150),
+  pullreq_state   varchar(20), 
+  pullreq_locked  BOOLEAN,
+  title           varchar(70),
+  pullreq_body    LONGTEXT,
+  created_at      DATETIME,
+  updated_at      DATETIME,
+  closed_at       DATETIME,
+  merged_at       DATETIME,
+  assignee        varchar(70),
+  assignees       varchar(210),
+  requested_reviewers varchar(210),
+  requested_teams varchar(100),
+  labels          varchar(250),
+  commits_url     varchar(150),
+  review_comment_url  varchar(150),
+  review_comments_url varchar(150),
+  comments_url    varchar(150),
+  statuses_url    varchar(150),
+  head_sha        varchar(50),
+  base_sha        varchar(50),
+  PRIMARY KEY (pullreq_id),
+  FOREIGN KEY (pullreq_id) REFERENCES PullRequestEvent(pullreq_id)     
+);
+
