@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS Repo;
 CREATE TABLE Repo (
   repo_id     varchar(20) not NULL,
   repo_name   varchar(50) not NULL,
-  repo_url    varhchar(150) not NULL,
+  repo_url    varchar(150) not NULL,
   PRIMARY KEY (repo_id)
 );
 
@@ -84,7 +84,7 @@ CREATE TABLE PullRequestEvent (
   additions           int(2),
   deletions           int(2),
   changed_files       int(2),
-  PRIMARY KEY (pullreq_event_id)
+  PRIMARY KEY (pullreq_event_id),
   FOREIGN KEY (pullreq_event_id) REFERENCES EventRelation(event_id)
 );
 
@@ -119,5 +119,78 @@ CREATE TABLE PullRequest (
   base_sha        varchar(50),
   PRIMARY KEY (pullreq_id),
   FOREIGN KEY (pullreq_id) REFERENCES PullRequestEvent(pullreq_id)     
+);
+
+DROP TABLE IF EXISTS IssueCommentEvent;
+CREATE TABLE IssueCommentEvent (
+  issue_event_id  varchar(20) NOT NULL,
+  issue_assoc     varchar(20) NOT NULL,
+  PRIMARY KEY (issue_event_id),
+  FOREIGN KEY (issue_event_id) REFERENCES EventRelation(event_id)
+);
+
+DROP TABLE IF EXISTS Issue;
+CREATE TABLE Issue (
+  issue_id      varchar(20) NOT NULL,
+  issue_url     varchar(150),
+  repo_url      varchar(150),
+  labels_url    varchar(150),
+  comments_url  varchar(150),
+  events_url    varchar(150),
+  html_url      varchar(150),
+  node_id       varchar(50),
+  number_id     int(6),
+  title         varchar(150),
+  labels        longtext,
+  issue_state   varchar(15),
+  locked_check  BOOLEAN,
+  assignee       varchar(70),
+  assignees      varchar(210),  
+  PRIMARY KEY (issue_id),
+  FOREIGN KEY (issue_id) REFERENCES IssueCommentEvent(issue_event_id)
+);
+
+DROP TABLE IF EXISTS IssueComment;
+CREATE TABLE IssueComment (
+  comment_url     varchar(150),
+  html_url        varchar(150),
+  comment_id      varchar(20),
+  issue_url       varchar(150),
+  issue_id_assoc  varchar(20),
+  node_id         varchar(20),
+  created_at      DATETIME,
+  updated_at      DATETIME,
+  author_assoc    varchar(20),
+  body_text       LONGTEXT,
+  user_id_assoc   varchar(20),
+  PRIMARY KEY (comment_id),
+  FOREIGN KEY (user_id_assoc) REFERENCES Users(user_id),
+  FOREIGN KEY (issue_id_assoc) REFERENCES Issue(issue_id)
+);
+
+DROP TABLE IF EXISTS PushEvent;
+CREATE TABLE PushEvent (
+  push_event_id   varchar(20) NOT NULL,
+  push_id         varchar(20) NOT NULL,
+  push_size       int(2),
+  push_distinct_size int(2),
+  push_ref        varchar(50),
+  push_head       varchar(70),
+  push_before     varchar(70),
+  PRIMARY KEY (push_event_id),
+  FOREIGN KEY (push_event_id) REFERENCES EventRelation(event_id)
+);
+
+DROP TABLE IF EXISTS PushCommit;
+CREATE TABLE PushCommit (
+  sha     varchar(90),
+  email   varchar(90),
+  com_name  varchar(60),
+  com_message mediumtext,
+  com_distinct  BOOLEAN,
+  com_url   varchar(150),
+  push_assoc  varchar(20) NOT NULL,
+  PRIMARY KEY (sha, push_assoc),
+  FOREIGN KEY (push_assoc) REFERENCES PushEvent(push_event_id)
 );
 
