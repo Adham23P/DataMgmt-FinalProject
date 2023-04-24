@@ -45,7 +45,7 @@ CREATE TABLE EventRelation (
 DROP TABLE IF EXISTS CreateEvent;
 CREATE TABLE CreateEvent (
   create_id       varchar(20) not NULL,
-  create_ref      varchar(150) not NULL, 
+  create_ref      varchar(150), 
   ref_type        varchar(20) not NULL,
   master_branch   varchar(15) not NULL,
   create_descrip  varchar(200),
